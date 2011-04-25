@@ -1,38 +1,37 @@
-README
-======
+Exercise 01: YUV and Demosaicing
+================================
 
-Course: Computer Vision 2011
-Authors: Michael Thomas, Jan Swoboda
-Date: 2011-04-21
-
+% Course: Computer Vision 2011
+% Authors: Michael Thomas, Jan Swoboda
+& Date: 2011-04-21
 
 Packages
-=======
+--------
 
-    graphic
+    - graphic
         
-        Some classes for manipulating images i wrote for convenience
+        > Some classes for manipulating images i wrote for convenience
 
-    uebung01
+    - uebung01
 
-         the actual code for the exercice
+         > the actual code for the exercice
 
 Execution
-=========
+---------
 
 Main Classes are:
     
-    uebung01.YUV
-    uebung01.Demosaicing
+    - uebung01.YUV
+    - uebung01.Demosaicing
 
 Classes can be executed by simple running the java vm:
 
-    java uebung01.YUV
-    java uebung01.Demosaicing
+    - java uebung01.YUV
+    - java uebung01.Demosaicing
 
 
 Remarks
-=======
+-------
 
 For some strange reason i couldnt stop getting bizare artefacts in both, converting
 to YUV and doing Bayer pattern. Seems like java BufferedImages have strange representation
