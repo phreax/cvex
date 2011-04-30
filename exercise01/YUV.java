@@ -8,7 +8,7 @@
  * @author Michael Thomas, Jan Swoboda
  */
 
-package uebung01;
+package exercise01;
 
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -105,7 +105,7 @@ public class YUV {
     
     public static void main(String[] args) {
 
-        String file = "uebung01/wallpaper.jpg";
+        String file = "exercise01/wallpaper.jpg";
         if(args.length >= 1) {
             file = args[0];
         }
