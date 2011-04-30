@@ -22,9 +22,9 @@ public class Image {
     }
 
     public Image(int width, int height, String type) {
-        int itype = BufferedImage.TYPE_INT_BGR;
+        int itype = BufferedImage.TYPE_INT_RGB;
         if(type.equals("rgb")) {
-            itype = BufferedImage.TYPE_INT_BGR;
+            itype = BufferedImage.TYPE_INT_RGB;
         }
         if(type.equals("gray")) {
             itype = BufferedImage.TYPE_BYTE_GRAY;
@@ -33,9 +33,15 @@ public class Image {
         this.image = new BufferedImage(width,height,itype);
     }
 
+    
+    public Image(int width, int height, int type) {
+        this.image = new BufferedImage(width,height,type);
+    }
+
     public Image(int width, int height) {
         this(width,height,"rgb");
     }
+    
     public static BufferedImage loadImage(String filename) {
         BufferedImage bimg = null;
         try {
@@ -50,6 +56,19 @@ public class Image {
         return this.image.getHeight();
     }
 
+    // convert to gray scale
+    public static Image rgb2gray(Image img) {
+        Image grayImg = new Image(img.width(),img.height(),"gray");
+        for(int i=0;i<img.width();i++) 
+            for(int j=0;j<img.height();j++) {
+                Color c = img.getPixel(i,j);
+                Color gray =  Color.rgb2gray(img.getPixel(i,j));
+                grayImg.setPixel(i,j,gray);
+            }
+
+        return grayImg;
+    }
+
     public int width() {
         return this.image.getWidth();
     }
@@ -59,6 +78,10 @@ public class Image {
         return this.image;
     }
 
+    /* get image type */
+    public int getType() {
+        return image.getType();
+    }
 
     /**
      * Updates the color of one pixel of the drawn image.
@@ -77,13 +100,19 @@ public class Image {
     }
 
     public Color getPixel(int x, int y) {
-        return new Color(this.image.getRGB(x,y));
+        return Color.fromInt(this.image.getRGB(x,y));
     }
 
     public int getGray(int x,int y) {
-        return this.image.getRGB(x,y);
+        Color c = this.getPixel(x,y); 
+        return c.gray();
     }
 
+    public void setGray(int x, int y, int val) {
+        Color c = new Color(val);
+        this.setPixel(x,y,c);
+    }
+    
     public void setPixel(int x, int y, int c) {
         this.image.setRGB(x, y, c);
         // Update image
