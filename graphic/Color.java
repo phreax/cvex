@@ -19,24 +19,30 @@ public class Color {
     public int[] channels;
 
     /* convert to integer representation */
-    static public int toInt(int c1, int c2, int c3) {
+    static public int toInt(int red,int green, int blue) {
 
-        if (c1 > 255) {
-            c1 = 255;
-        }
-        if (c2 > 255) {
-            c2 = 255;
-        }
-        if (c3 > 255) {
-            c3 = 255;
-        }
-        // Shift them to the right place
-        c1 = c1 * 0x00010000;
-        c2 = c2 * 0x00000100;
-        c3 = c3 * 0x00000001;
+        int rgb = red;
+        rgb = (rgb << 8) + green;
+        rgb = (rgb << 8) + blue;
+
+        return rgb;
     
-        return c1 + c2 + c3;
     }
+
+    // return gray value of the color
+    public int gray() {
+        int r,g,b,y;
+
+        r = channels[0];
+        g = channels[1];
+        b = channels[2];
+
+        // lumination
+        y = (int)(r*0.299 + g * 0.587 + b * 0.114);
+
+        return y;
+    }
+        
 
     public int toInt() {
         return toInt(channels[0],channels[1],channels[2]);
@@ -53,12 +59,16 @@ public class Color {
         this.channels = channels;
     }
 
-    public Color(int color) {
-        this(fromInt(color).channels);
+    // create a gray value from a single parameter
+    public Color(int gray) {
+        this.channels = new int[3];
+        this.channels[0] = gray;
+        this.channels[1] = gray;
+        this.channels[2] = gray;
     }
     
     /* convert from integer representation */
-    static public Color fromInt(int rgb) {
+    /*static public Color fromInt(int rgb) {
         int c1,c2,c3,reminder;
 
         c1 = rgb / 0x00010000;
@@ -68,6 +78,22 @@ public class Color {
         
         c3 = reminder;
         return new Color(c1,c2,c3);
+    }*/
+
+    /* convert from integer representation */
+    static public Color fromInt(int rgb) {
+        
+        int red = (rgb >> 16) & 0xFF;
+        int green = (rgb >> 8) & 0xFF;
+        int blue = rgb & 0xFF;
+        
+        return new Color(red,green,blue);
+    }
+
+   
+    /* convert to gray */
+    static public Color rgb2gray(Color c) {
+        return new Color(c.gray());
     }
 
     /* convert rgb to yuv colorspace */
