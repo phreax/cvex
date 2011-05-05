@@ -1,5 +1,6 @@
 package graphic;
 
+import java.lang.IllegalArgumentException;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -118,4 +119,54 @@ public class Image {
         // Update image
         this.image.flush();
     }
+
+    public boolean checkBoundaries(int x, int y) {
+        return ( x>=0 && y>=0 && x<width() && y < height());
+    }
+
+    // substract image1 - image2
+    // normalize result to 0..255
+    public static Image subNorm(Image minImg, Image subImg ) {
+
+        int w = minImg.width();
+        int h = minImg.height();
+        if(h != subImg.height() || w != subImg.width()) 
+            throw new IllegalArgumentException("Image Dimensions do not match!");
+
+        int max =  Integer.MIN_VALUE;
+        int min =  Integer.MAX_VALUE;
+
+        // temporary buffer
+        short[][] shortimage = new short[w][h];
+
+
+        short val;
+
+        for(int i = 0; i<w; i++)
+            for(int j = 0; j<h; j++) {
+                val = (short) (minImg.getGray(i,j) - subImg.getGray(i,j));
+
+                shortimage[i][j] = val;
+
+                if(val<min) min = val;
+                if(val>max) max = val;
+            }
+
+        // coffecients for linear spread
+        double b = 255.0;
+        if((max-min) > 0)
+            b = b / (max-min);
+        double c = (-1)*min;
+
+        // result image
+        Image diffImg = new Image(w,h,"gray");
+        for(int i = 0; i<w; i++)
+            for(int j = 0; j<h; j++) {
+                val = (short) ((shortimage[i][j] + c)*b);
+                diffImg.setGray(i,j,val);
+            }
+
+        return diffImg;
+    }
+
 }
