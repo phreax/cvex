@@ -56,7 +56,6 @@ public class Convolution {
                         jj = j - kcenter.getY() +frow;
 
                         if(image.checkBoundaries(ii,jj)) {
-                            //floatimage[i][j] += (double)image.getGray(ii,jj) * kernel.get(frow,fcol);
                             shortimage[i][j] += (short)(image.getGray(ii,jj)*kernel.get(frow,fcol));
                             
                         }

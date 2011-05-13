@@ -50,10 +50,14 @@ public class Image {
      **/
 
     public Image(short[][] shortimage ) {
-        Image imgSpreaded = linearSpreadShort(shortimage);
+        Image imgSpreaded = linearSpread(shortimage);
         this.image = imgSpreaded.getImage();
     }
 
+    public Image(int[][] intimage ) {
+        Image imgSpreaded = linearSpread(intimage);
+        this.image = imgSpreaded.getImage();
+    }
       
 
     // load image from file
@@ -211,7 +215,7 @@ public class Image {
     }
 
 
-    public static Image linearSpreadShort(short[][] shortimage) {
+    public static Image linearSpread(short[][] shortimage) {
 
         int w = shortimage.length;
         int h = shortimage[0].length;
@@ -242,6 +246,44 @@ public class Image {
         for(int i = 0; i<w; i++)
             for(int j = 0; j<h; j++) {
                 val = (short) ((shortimage[i][j] + c)*b);
+                imgSpreaded.setGray(i,j,val);
+            }
+
+        return imgSpreaded;
+
+    }
+
+    public static Image linearSpread(int[][] intimage) {
+
+        int w = intimage.length;
+        int h = intimage[0].length;
+
+        int max =  Integer.MIN_VALUE;
+        int min =  Integer.MAX_VALUE;
+
+        Image imgSpreaded = new Image(w,h,"gray");
+
+        int val;
+
+        for(int i = 0; i<w; i++)
+            for(int j = 0; j<h; j++) {
+                val = intimage[i][j]; 
+
+                if(val<min) min = val;
+                if(val>max) max = val;
+            }
+
+        // coffecients for linear spread
+        double b = 255.0;
+        if((max-min) > 0)
+            b = b / (max-min);
+        double c = (-1)*min;
+
+        // result image
+        Image diffImg = new Image(w,h,"gray");
+        for(int i = 0; i<w; i++)
+            for(int j = 0; j<h; j++) {
+                val = (int) ((intimage[i][j] + c)*b);
                 imgSpreaded.setGray(i,j,val);
             }
 
