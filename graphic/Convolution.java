@@ -14,7 +14,7 @@ import java.lang.IllegalArgumentException;
 
 public class Convolution {
 
-    public static Image filter(Image image, Matrix kernel) {
+    public static short[][] filter(Image image, Matrix kernel) {
 
         int w = image.width();
         int h = image.height();
@@ -68,7 +68,7 @@ public class Convolution {
                 if(val>max) max = val;
             }
 
-        // convert 16bit to 8bit image
+/*        // convert 16bit to 8bit image
 
         // coffecients for linear spread
         double b = 255.0;
@@ -81,8 +81,8 @@ public class Convolution {
                 val = (short) ((shortimage[i][j] + c)*b);
                 convimage.setGray(i,j,val);
             }
-
-        return convimage; 
+*/
+        return shortimage; 
     }
 
     /** compute first derivative
@@ -90,7 +90,7 @@ public class Convolution {
      * @param image -- input image
      * @param dir   -- direction x= 0, y= 1
      **/
-    public static Image sobel(Image image, int dir) {
+    public static short[][] sobel(Image image, int dir) {
         
         if(dir > 1 || dir <0) 
             throw new IllegalArgumentException("Direction must be 0 or 1");
