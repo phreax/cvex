@@ -16,10 +16,10 @@ public class MinMax {
 
     public static short[][] max(short[][] image, int windowsize) {
  
-        int w = image.width();
-        int h = image.height();
+        int w = image.length;
+        int h = image[0].length;
 
-        int[][] imgMax = new int[w][h];
+        short[][] imgMax = new short[w][h];
 
         short max;
         short val;
@@ -28,7 +28,7 @@ public class MinMax {
             for(int j=0;j<h;j++) {
 
                 max = Short.MIN_VALUE;
-                Neigborhood neigh = new Neighborhood(Point(i,j),windowsize);
+                Neighborhood neigh = new Neighborhood(new Point(i,j),windowsize);
 
                 for(Point p : neigh) {
 
@@ -40,6 +40,8 @@ public class MinMax {
                 imgMax[i][j] = max;
 
             }
+    
+        return imgMax;
     }
 }
 

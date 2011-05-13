@@ -7,12 +7,12 @@ public class SobelTest {
     {
         Image original = new Image(args[0]);
 
-        Image sobelx = Convolution.sobel(original,0);
-        Image sobely = Convolution.sobel(original,1);
+        short[][] sobelx = Convolution.sobel(original,0);
+        short[][] sobely = Convolution.sobel(original,1);
 
         Painter painterOriginal = new Painter("original",original);
-        Painter painterSobelX = new Painter("sobel in x", sobelx);
-        Painter painterSobelY = new Painter("sobel in y", sobely);
+        Painter painterSobelX = new Painter("sobel in x", new Image(sobelx));
+        Painter painterSobelY = new Painter("sobel in y", new Image(sobely));
     }
 }
 

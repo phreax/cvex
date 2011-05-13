@@ -16,6 +16,7 @@ import graphic.Color;
 
 public class Image {
 
+    // underlying image buffer
     private BufferedImage image;
 
     public Image(String filename) {
@@ -42,7 +43,20 @@ public class Image {
     public Image(int width, int height) {
         this(width,height,"rgb");
     }
-    
+
+    /** create gray image from signed int
+     *
+     * spread to gray 0-255
+     **/
+
+    public Image(short[][] shortimage ) {
+        Image imgSpreaded = linearSpreadShort(shortimage);
+        this.image = imgSpreaded.getImage();
+    }
+
+      
+
+    // load image from file
     public static BufferedImage loadImage(String filename) {
         BufferedImage bimg = null;
         try {
@@ -51,10 +65,6 @@ public class Image {
             e.printStackTrace();
         }
         return bimg;
-    }
-
-    public int height() {
-        return this.image.getHeight();
     }
 
     // convert to gray scale
@@ -70,10 +80,14 @@ public class Image {
         return grayImg;
     }
 
+    // get image dimensions
     public int width() {
         return this.image.getWidth();
     }
 
+    public int height() {
+        return this.image.getHeight();
+    }
     /* return the underlying buffered image object */
     public BufferedImage getImage() {
         return this.image;
@@ -124,6 +138,33 @@ public class Image {
         return ( x>=0 && y>=0 && x<width() && y < height());
     }
 
+    /** substract to images
+     * @param minImg   -- minuend
+     * @param subImage -- subtrahent
+     *
+     * @return signed int16 (short) image 
+     **/
+    public static short[][] sub(Image minImg, Image subImg) {
+
+        int w = minImg.width();
+        int h = minImg.height();
+        if(h != subImg.height() || w != subImg.width()) 
+            throw new IllegalArgumentException("Image Dimensions do not match!");
+
+        // temporary buffer
+        short[][] shortimage = new short[w][h];
+
+
+        short val;
+
+        for(int i = 0; i<w; i++)
+            for(int j = 0; j<h; j++) {
+                val = (short) (minImg.getGray(i,j) - subImg.getGray(i,j));
+                shortimage[i][j] = val;
+            }
+        return shortimage;
+    }
+
     // substract image1 - image2
     // normalize result to 0..255
     public static Image subNorm(Image minImg, Image subImg ) {
@@ -169,4 +210,42 @@ public class Image {
         return diffImg;
     }
 
+
+    public static Image linearSpreadShort(short[][] shortimage) {
+
+        int w = shortimage.length;
+        int h = shortimage[0].length;
+
+        int max =  Integer.MIN_VALUE;
+        int min =  Integer.MAX_VALUE;
+
+        Image imgSpreaded = new Image(w,h,"gray");
+
+        short val;
+
+        for(int i = 0; i<w; i++)
+            for(int j = 0; j<h; j++) {
+                val = shortimage[i][j]; 
+
+                if(val<min) min = val;
+                if(val>max) max = val;
+            }
+
+        // coffecients for linear spread
+        double b = 255.0;
+        if((max-min) > 0)
+            b = b / (max-min);
+        double c = (-1)*min;
+
+        // result image
+        Image diffImg = new Image(w,h,"gray");
+        for(int i = 0; i<w; i++)
+            for(int j = 0; j<h; j++) {
+                val = (short) ((shortimage[i][j] + c)*b);
+                imgSpreaded.setGray(i,j,val);
+            }
+
+        return imgSpreaded;
+
+    }
 }

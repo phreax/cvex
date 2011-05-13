@@ -36,7 +36,7 @@ public class Integral {
                 ly = j>0 ? imgIntegral[i][j-1] : 0;
                 lxy = i>0 && j>0 ? imgIntegral[i-1][j-1] : 0;
 
-                imgIntegral[i,j] = image.getGray(i,j) + lx + ly - lxy; 
+                imgIntegral[i][j] = image.getGray(i,j) + lx + ly - lxy; 
             }
 
         return imgIntegral;
