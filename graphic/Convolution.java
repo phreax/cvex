@@ -105,6 +105,108 @@ public class Convolution {
         return filter(image,kernel);
     }
 
+    /** sum up pixel intensities over
+     *  a reagion, using integral images
+     *
+     *  @param image  -- integral image
+     *  @param region -- rectangle defining the region
+     *  @return       -- sum_{(x,y) in region)} I(x,y)
+     **/
+    private static int sumIntensities(int[][] image, Rectangle rect) {
+
+        int w = image.length;
+        int h = image[0].length;
+
+        // corners of rectangular region 
+        Point a,b,c,d;
+        a = rect.p1;
+        c = rect.p2; 
+        b = new Point(c.x,a.y);
+        d = new Point(a.x,c.y);
+
+        // check boundaries
+        if(a.getX() <0) a.x = 0;
+        if(a.getY() <0) a.y = 0;
+        if(b.getX() >= w) b.x = w-1;
+        if(b.getY() <0) b.y = 0;
+        if(c.getX() >= w) c.x = w-1;
+        if(c.getY() >= h) c.y = h-1;
+        if(d.getX() <0) d.x = 0;
+        if(d.getY() >=h) d.y = h-1;
+
+        int val;
+        try {
+            val = image[a.getX()][a.getY()] + image[c.getX()][c.getY()] - image[b.getX()][b.getY()]
+                                                                    - image[d.getX()][d.getY()];
+        } catch(ArrayIndexOutOfBoundsException e) {
+            System.out.printf("Image dimensions: %dx%d\n", w,h );
+            System.out.printf("a = %s\n", a);
+            System.out.printf("b = %s\n", b);
+            System.out.printf("c = %s\n", c);
+            System.out.printf("d = %s\n", d);
+            throw(e);
+        }
+            
+        return val;
+     
+    }
+
+    /** compute approximized haar
+     * wavelet responses in x or y direction
+     * making efficient use of integral images
+     *
+     * @param image -- integral image 
+     * @param size  -- window size 
+     * @param dir   -- diretion x=0, y=1
+     **/
+    public static short[][] haar(int[][] image, int size, int dir) {
+       
+        // defining rectangles for black (-2) and
+        // white areas of the haar wavelet
+
+        if(dir <0 || dir > 1) 
+            throw new IllegalArgumentException("direction must be 0 or 1");
+
+        Rectangle whitewave, blackwave;
+
+        // Rectangle defining black and white areas
+        
+        // x direction
+        whitewave = new Rectangle(-size/2,-size/2,size/2,0);
+        blackwave = new Rectangle(-size/2,0,size/2,size/2);
+        
+        if(dir == 1) {
+            whitewave = new Rectangle(-size/2,-size/2,0,size/2);
+            blackwave = new Rectangle(0,-size/2,size/2,size/2);
+        }
+
+        int w = image.length;
+        int h = image[0].length;
+
+        short[][] imgResponse = new short[w][h];
+
+        Point current;
+        int sumwhite,sumblack;
+        for(int i=0;i<w;i++) 
+            for (int j=0; j<h; j++) {
+                current = new Point(i,j);
+
+                // sum white and black areas
+                sumblack = (-2) * sumIntensities(image, new Rectangle(
+                            Point.add(blackwave.p1,current),
+                            Point.add(blackwave.p2,current))
+                        );
+
+                sumwhite =  sumIntensities(image, new Rectangle(
+                            Point.add(whitewave.p1,current),
+                            Point.add(whitewave.p2,current))
+                        );
+                imgResponse[i][j] = (short)(sumblack + sumwhite);
+            }
+
+        return imgResponse;
+    }
+
 }
 
 
