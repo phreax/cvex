@@ -1,8 +1,8 @@
 % use gui to get image
 % coordinates for the corners
 
-function coord = imcoord(filename)
+function coord = get_corners(filename)
 
-image = imread(filename);
-imshow(image);
+img = imread(filename);
+image(img);
 coord = ginput(4); % get corners
