@@ -18,4 +18,4 @@ h2 = H(:,2);
 
 lambda = max(norm(h1),norm(h2));
 
-Hs = lambda*H;
+Hs = H * (1/lambda); 
