@@ -123,11 +123,8 @@ public class HarrisCorner {
             System.out.printf("d = %s\n", d);
             throw(e);
         }
-            
-            
 
         return val;
-     
     }
     
 
@@ -183,7 +180,7 @@ public class HarrisCorner {
                 blobresponses[i][j] = det;
             }
 
-        this.blobmaxima = MinMax.max(blobresponses,3);
+        this.blobmaxima = MinMax.nms(blobresponses,10);
     }
 }
 

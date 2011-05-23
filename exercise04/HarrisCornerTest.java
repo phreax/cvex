@@ -47,8 +47,6 @@ public class HarrisCornerTest {
 
         hc.findCorners(image,9);
 
-        Painter painterMaxima = new Painter("Blob Maxima",new Image(hc.blobmaxima));
-       
         for(int i=0;i<image.width();i++)
             for(int j=0;j<image.height();j++) 
                 if(hc.blobmaxima[i][j] > 0) 
