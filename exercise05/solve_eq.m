@@ -21,3 +21,5 @@ h = V(:,end);
 % reshapre solution into a 3x3 matrix
 
 H = reshape(h,3,3)';
+
+H = scale_h_matrix(H);

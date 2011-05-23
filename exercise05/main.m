@@ -32,7 +32,7 @@ disp('please mark corners in the order: topleft,topright,bottomleft,bottomright'
 % scale to meters (chip coordinates)
 disp('corners in meters are:');
 xc = scale_im_coord(cornersx)
-yc = scale_im_coord(cornersy)c
+yc = scale_im_coord(cornersy)
 
 % world coordinates of corners
 disp('world coordinates are:');
@@ -55,7 +55,7 @@ t = calc_translation(H)
 R = calc_rotation(H);
 disp('camara orientation (pitch, yaw, roll):');
 
-angles = calc_cam_orientation(R)
+angles = calc_cam_angles(R)
 
 disp('completed');
 
