@@ -13,6 +13,7 @@ import graphic.*;
 import exercise06.*;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.util.List;
 
 public class FieldGraphic {
 
@@ -23,6 +24,9 @@ public class FieldGraphic {
              gltopinner,glbottomouter,glbottominner,
              grtopouter,grtopinner,grbottomouter,grbottominner,
              penaltyleft,penaltyright, circletop, circleleft;
+
+    Image image = new Image(800,600);
+    Graphics graphic;
 
     public FieldGraphic () {
         this.center = new Vector2D(400,300);
@@ -73,19 +77,22 @@ public class FieldGraphic {
         this.penaltyright    = penaltyright.mul(100).add(center);
         this.circletop       = circletop.mul(100).add(center);
         this.circleleft      = circleleft.mul(100).add(center);
+
+        // create Graphic object to manipulate image
+        this.graphic = this.image.getImage().createGraphics();
     }
 
+    /**
+     * Visualize the soccer field
+     *
+     * @params: none
+     * @return: none
+     **/
     public void visualize() {
-        
-        Image fieldImage = new Image(800,600);
-        Graphics graphic = fieldImage.getImage().createGraphics();
-
         // the green weedy soccer field
-        graphic.setColor(Color.green);
-        graphic.fillRect(0,0,800,600);
-
-        graphic.setColor(Color.white);
-        
+        this.graphic.setColor(Color.green);
+        this.graphic.fillRect(0,0,800,600);
+        this.graphic.setColor(Color.white);
         //topleft - bottomleft
         graphic.drawLine(this.topleft.getX(), this.topleft.getY(), this.bottomleft.getX(), this.bottomleft.getY());
         //topleft - topright
@@ -105,17 +112,28 @@ public class FieldGraphic {
         graphic.drawLine(this.grbottominner.getX(), this.grbottominner.getY(), this.grbottomouter.getX(), this.grbottomouter.getY());
         graphic.drawLine(this.grtopinner.getX(), this.grtopinner.getY(), this.grbottominner.getX(), this.grbottominner.getY());
         //penalty left
-        graphic.drawRect(this.penaltyleft.getX(), this.penaltyleft.getY(), 1, 1);
+        graphic.drawRect(this.penaltyleft.getX()-1, this.penaltyleft.getY()-1, 3, 3);
         //penalty right
-        graphic.drawRect(this.penaltyright.getX(), this.penaltyright.getY(), 1, 1);
-        //circle
-        System.out.println(this.circletop.getX() + "  " + this.circletop.getY());
-        System.out.println(this.circleleft.getX() + "  " + this.circleleft.getY());
-        int circlewidth = (int)this.circleleft.distance(this.center) * 2;
+        graphic.drawRect(this.penaltyright.getX()-1, this.penaltyright.getY()-1, 3, 3);
+        //circle  (note that java.awt.Graphics sux a bit, therefore a little work arounds)
+        int circlewidth = (int)this.circleleft.distance(this.center) * 2; 
         int circleheight = (int)this.circletop.distance(this.center) * 2;
         graphic.drawOval(this.circleleft.getX(), this.circletop.getY(), circlewidth, circleheight);
-
-        Painter painter = new Painter("Soccer Field", fieldImage);
+        //paint the field
+        Painter painter = new Painter("Soccer Field", this.image);
     }
-        
+
+    /**
+     * Visualize Data Cloud
+     *
+     * @param: List of Vector2D Objects
+     * @return: none
+     **/
+    public void visualizeCloud(List<Vector2D> cloud) {
+        this.graphic.setColor(Color.yellow);
+        for (Vector2D c : cloud) {
+            graphic.drawRect(c.getX()-1,c.getY()-1,3,3);
+        }
+        Painter painter = new Painter("Data Cloud on Soccer Field", this.image);
+    }
 }
