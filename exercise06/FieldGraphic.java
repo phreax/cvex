@@ -88,7 +88,7 @@ public class FieldGraphic {
      * @params: none
      * @return: none
      **/
-    public void visualize() {
+    public Image visualizeField() {
         // the green weedy soccer field
         this.graphic.setColor(Color.green);
         this.graphic.fillRect(0,0,800,600);

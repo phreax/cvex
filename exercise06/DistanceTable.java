@@ -35,12 +35,12 @@ public class DistanceTable {
     //  distances to each model 
     //  element (to save costs, pre compute
     //  all distances befor)
-    Vector2D dmatrix[][][];
+    double dmatrix[][][];
 
     public DistanceTable() {
 
         vmatrix = new Vector2D[gridWidth][gridHeight][11];
-        dmatrix = new Vector2D[gridWidth][gridHeight][11];
+        dmatrix = new double[gridWidth][gridHeight][11];
     }
 
     /* compute the nearest point on a line
@@ -54,7 +54,7 @@ public class DistanceTable {
 
         // normalized length of the projection vector
         Vector2D r = Vector2D.sub(v,u); // direction vector)
-        double t = Vector2D.dot(Vector2Dsub(p,u),r) / Vector2D.dot(r,r);
+        double t = Vector2D.dot(Vector2D.sub(p,u),r) / Vector2D.dot(r,r);
 
         // projection is on within the linesegment -> nearest point
         // is the next endpoint
@@ -65,14 +65,28 @@ public class DistanceTable {
         return( Vector2D.add(u,Vector2D.mul(r,t)));
     }
 
-    private static Vector2D centerGridPoint(Vector2D p) {
+    /*private static Vector2D centerGridPoint(Vector2D p) {
 
         // translate to origin at center
         Vector2D pc = Vector2D.sub(p,center);
         return pc;
     }
+    */
 
-    private argmin(
+    // return index of nearest model element
+    // for a given point
+    public int getArgMin(int i, int j) {
+        double distances[] = dmatrix[i][j];
+
+        int argmin = 0;
+        for(int k=0;k<11;k++) {
+            if(distances[k] < distances[argmin]) {
+                argmin = k;
+            }
+        }
+        return argmin;
+    }
+            
 
     public void createTable() {
 
@@ -137,76 +151,159 @@ public class DistanceTable {
 
                 Vector2D current = new Vector2D(i,j);
                 Vector2D basepoint;
-                double dist;
                 // distances to each model element
 
                 // left boundary
                 basepoint = nearestPoint(bottomleft,topleft,current);
-                dist = Vector2D.distance(basepoint,current);
                
                 vmatrix[i][j][0] = Vector2D.sub(basepoint,current);
-                dmatrix[i][j][0] = dist;
+                dmatrix[i][j][0] = Vector2D.distance(basepoint,current);
                 
-                // left goal
-                basepoint = nearestPoint(bottomleft,topleft,current);
-                dist = Vector2D.distance(basepoint,current);
-               
-                vmatrix[i][j][0] = Vector2D.sub(basepoint,current);
-                dmatrix[i][j][0] = dist;
-
                 // left penalty
-                dist = Vector2D.distance(penaltyleft,current);
+                vmatrix[i][j][1] = Vector2D.sub(penaltyleft,current);;
+                dmatrix[i][j][1] = Vector2D.distance(penaltyleft,current);
 
-                vmatrix[i][j][0] = Vector2D.sub(penaltyleft,current);;
-                dmatrix[i][j][0] = dist;
-
-                
                 
                 // right boundary
                 basepoint = nearestPoint(bottomright,topright,current);
-                dist = Vector2D.distance(basepoint,current);
                
-                vmatrix[i][j][0] = Vector2D.sub(basepoint,current);
-                dmatrix[i][j][0] = dist;
-
-                // right goal
+                vmatrix[i][j][2] = Vector2D.sub(basepoint,current);
+                dmatrix[i][j][2] = Vector2D.distance(basepoint,current);
 
                 // right penalty
-                dist = Vector2D.distance(penaltyright,current);
-
-                vmatrix[i][j][0] = Vector2D.sub(penaltyright,current);;
-                dmatrix[i][j][0] = dist;
-
-                // right circle half
+                vmatrix[i][j][3] = Vector2D.sub(penaltyright,current);;
+                dmatrix[i][j][3] = Vector2D.distance(penaltyright,current);
 
                 // top boundary
                 basepoint = nearestPoint(topleft,topright,current);
-                dist = Vector2D.distance(basepoint,current);
                
-                vmatrix[i][j][0] = Vector2D.sub(basepoint,current);
-                dmatrix[i][j][0] = dist;
-
+                vmatrix[i][j][4] = Vector2D.sub(basepoint,current);
+                dmatrix[i][j][4] = Vector2D.distance(basepoint,current);
                 
                 // bottom boundary
                 basepoint = nearestPoint(bottomleft,bottomright,current);
-                dist = Vector2D.distance(basepoint,current);
                
-                vmatrix[i][j][0] = Vector2D.sub(basepoint,current);
-                dmatrix[i][j][0] = dist;
+                vmatrix[i][j][5] = Vector2D.sub(basepoint,current);
+                dmatrix[i][j][5] = Vector2D.distance(basepoint,current);
 
                 // center line
-
                 basepoint = nearestPoint(bottomcenter,topcenter,current);
-                dist = Vector2D.distance(basepoint,current);
                
-                vmatrix[i][j][0] = Vector2D.sub(basepoint,current);
-                dmatrix[i][j][0] = dist;
+                vmatrix[i][j][6] = Vector2D.sub(basepoint,current);
+                dmatrix[i][j][6] = Vector2D.distance(basepoint,current);
 
                 // left/circle half circle half
                 
                 // consider field side
                 // left half
+                double radius = FieldModel.CENTRE_CIRCLE_RADIUS;
                 if(i<=gridWidth) {
-                    dist = Math.abs(Vector2D.distance(current,center) - FieldModel.CENTER_CIRCLE_RADIUS);
+
+                    // computing distance to left circle
+
+                    // distance from point to center
+                    double dc = Math.abs(Vector2D.distance(current,center));
+
+                    // closest point on the circle is given by
+                    // (center-current) * (|1-r/dc|)
+                    // length of the vector is |dc -r| 
+
+                    vmatrix[i][j][7] = Vector2D.sub(center,current).mul(Math.abs(1-(radius/dc)));
+                    dmatrix[i][j][7] = Math.abs(dc-radius);
+
+                    // computing distance to right circle
+                    // closest point is basicly the intersection of 
+                    // the circle with the centre line, eather top, or bottom
+
+                    // closer to top ?
+                    //
+                    if(j>=centerY) {
+                        basepoint = new Vector2D(centerX,centerY+radius);
+                    }
+                    else
+                        basepoint = new Vector2D(centerX,centerY-radius);
+
+                    vmatrix[i][j][8] = Vector2D.sub(basepoint,current);
+                    dmatrix[i][j][8] =  Vector2D.distance(basepoint,current);
+                }
+                // point is in the right half
+                else {
+                    
+                    // closer to top ?
+                    //
+                    if(j>=centerY) {
+                        basepoint = new Vector2D(centerX,centerY+radius);
+                    }
+                    else
+                        basepoint = new Vector2D(centerX,centerY-radius);
+
+                    vmatrix[i][j][7] = Vector2D.sub(basepoint,current);
+                    dmatrix[i][j][7] =  Vector2D.distance(basepoint,current);
+                    // computing distance to left circle
+
+                    // distance from point to center
+                    double dc = Math.abs(Vector2D.distance(current,center));
+
+                    // closest point on the circle is given by
+                    // (center-current) * (|1-r/dc|)
+                    // length of the vector is |dc -r| 
+
+                    vmatrix[i][j][8] = Vector2D.sub(center,current).mul(Math.abs(1-(radius/dc)));
+                    dmatrix[i][j][8] = Math.abs(dc-radius);
+
+                    // computing distance to right circle
+                    // closest point is basicly the intersection of 
+                    // the circle with the centre line, eather top, or bottom
+                }
+
+                // compute goals
+                Vector2D goalBasePoints[] = new Vector2D[3];
+                int argmin = 0;
+                double dist;
+                double minDist = 1000000; 
+
+                // left goal
+                //
+                // compute distances to each goal line segment
+                goalBasePoints[0] = nearestPoint(gltopinner,gltopouter,current);
+                goalBasePoints[1] = nearestPoint(glbottominner,glbottomouter,current);
+                goalBasePoints[2] = nearestPoint(glbottomouter,gltopouter,current);
+
+                
+                for(int k=0;k<3;k++) {
+                    dist = Vector2D.distance(goalBasePoints[k],current);
+                    if(dist<minDist) {
+                        minDist = dist;
+                        argmin=k;
+                    }
+                }
+
+                vmatrix[i][j][9] = Vector2D.sub(goalBasePoints[argmin],current);
+                dmatrix[i][j][9] = minDist;
 
 
+                // doing the same for right goal
+
+
+                goalBasePoints[0] = nearestPoint(grtopinner,grtopouter,current);
+                goalBasePoints[1] = nearestPoint(grbottominner,grbottomouter,current);
+                goalBasePoints[2] = nearestPoint(grbottomouter,grtopouter,current);
+
+                minDist = 1000000; 
+                argmin=0;
+                for(int k=0;k<3;k++) {
+                    dist = Vector2D.distance(goalBasePoints[k],current);
+                    if(dist<minDist) {
+                        minDist = dist;
+                        argmin=k;
+                    }
+                }
+
+                vmatrix[i][j][10] = Vector2D.sub(goalBasePoints[argmin],current);
+                dmatrix[i][j][10] = minDist;
+
+
+            }
+    }
+
+}

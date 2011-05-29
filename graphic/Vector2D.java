@@ -93,6 +93,10 @@ public class Vector2D {
         return new Vector2D(x*s,y*s);
     }
 
+    public static Vector2D mul(Vector2D v,double s) {
+        return v.mul(s);
+    }
+
     // dot product
     public static double dot(Vector2D v1, Vector2D v2) {
         return v1.x*v2.x + v1.y*v2.y;
