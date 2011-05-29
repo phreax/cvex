@@ -88,7 +88,7 @@ public class FieldGraphic {
      * @params: none
      * @return: none
      **/
-    public Image visualizeField() {
+    public  visualizeField() {
         // the green weedy soccer field
         this.graphic.setColor(Color.green);
         this.graphic.fillRect(0,0,800,600);
@@ -136,4 +136,21 @@ public class FieldGraphic {
         }
         Painter painter = new Painter("Data Cloud on Soccer Field", this.image);
     }
+
+    public void visualizeDistances() {
+
+        DistanceTable dtable = new DistanceTable();
+        dtable.createTable();
+
+        int argmin;
+        for(int i=0;i<image.width();i++=)
+            for(int j=0;j<image.height();i++) {
+                argmin = dtable.getArgMin();
+                Vector2D dvector = dtable.vmatrix[i][j][argmin];
+                this.graphic.setColor(Color.blue);
+                draw
+
+
+
+
 }
