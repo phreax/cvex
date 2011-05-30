@@ -21,7 +21,9 @@ public class FieldLineExtractorTest {
         Image image = new Image(args[0]);
 
         List<Vector2D> pointcloud = FieldLineExtractor.extractPoints(image);
+        List<Vector2D> transformedcloud = FieldLineExtractor.transformPoints(pointcloud);
         visualize(pointcloud);
+        visualize(transformedcloud);
     }
 
     public static void visualize(List<Vector2D> pointcloud) {
@@ -29,11 +31,13 @@ public class FieldLineExtractorTest {
         Image image = new Image(800,600);
 
         for(Vector2D v: pointcloud) {
-            image.setGray(v.getX(),v.getY(),255);
+            if(image.checkBoundaries(v.getX(), v.getY())) {
+                image.setGray(v.getX(),v.getY(),255);
+            }
         }
 
-
         Painter painter = new Painter("the cloud", image);
+
     }
 }
 
