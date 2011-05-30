@@ -121,8 +121,8 @@ public class DistanceTable {
         grbottomouter   = new Vector2D(FieldModel.HFL,-FieldModel.HGW); 
         grbottominner   = new Vector2D(grbottomouter.x-FieldModel.GOAL_AREA_DEPTH,grbottomouter.y); 
 
-        penaltyleft     = new Vector2D(-FieldModel.HFL+FieldModel.PENALTY_DIST,0);
-        penaltyright    = new Vector2D(FieldModel.HFL-FieldModel.PENALTY_DIST,0);
+        penaltyleft     = new Vector2D(FieldModel.PENALTY_DIST,0);
+        penaltyright    = new Vector2D(-FieldModel.PENALTY_DIST,0);
 
 
         // scale to cm and translate by grid origin
@@ -147,7 +147,7 @@ public class DistanceTable {
 
         // compute distances and distance vector table
         for(int i=0; i< gridWidth; i++) 
-            for(int j=0; j< gridWidth; j++) {
+            for(int j=0; j< gridHeight; j++) {
 
                 Vector2D current = new Vector2D(i,j);
                 Vector2D basepoint;
@@ -196,8 +196,8 @@ public class DistanceTable {
                 
                 // consider field side
                 // left half
-                double radius = FieldModel.CENTRE_CIRCLE_RADIUS;
-                if(i<=gridWidth) {
+                double radius = FieldModel.CENTRE_CIRCLE_RADIUS*100;
+                if(i<=centerX) {
 
                     // computing distance to left circle
 
@@ -208,8 +208,10 @@ public class DistanceTable {
                     // (center-current) * (|1-r/dc|)
                     // length of the vector is |dc -r| 
 
-                    vmatrix[i][j][7] = Vector2D.sub(center,current).mul(Math.abs(1-(radius/dc)));
+                    //if current point is inside the circle, flip vector 
+                    vmatrix[i][j][7] = Vector2D.sub(center,current).mul((1-(radius/dc)));
                     dmatrix[i][j][7] = Math.abs(dc-radius);
+
 
                     // computing distance to right circle
                     // closest point is basicly the intersection of 
@@ -248,7 +250,7 @@ public class DistanceTable {
                     // (center-current) * (|1-r/dc|)
                     // length of the vector is |dc -r| 
 
-                    vmatrix[i][j][8] = Vector2D.sub(center,current).mul(Math.abs(1-(radius/dc)));
+                    vmatrix[i][j][8] = Vector2D.sub(center,current).mul(1-(radius/dc));
                     dmatrix[i][j][8] = Math.abs(dc-radius);
 
                     // computing distance to right circle
@@ -267,7 +269,7 @@ public class DistanceTable {
                 // compute distances to each goal line segment
                 goalBasePoints[0] = nearestPoint(gltopinner,gltopouter,current);
                 goalBasePoints[1] = nearestPoint(glbottominner,glbottomouter,current);
-                goalBasePoints[2] = nearestPoint(glbottomouter,gltopouter,current);
+                goalBasePoints[2] = nearestPoint(glbottominner,gltopinner,current);
 
                 
                 for(int k=0;k<3;k++) {
@@ -287,7 +289,7 @@ public class DistanceTable {
 
                 goalBasePoints[0] = nearestPoint(grtopinner,grtopouter,current);
                 goalBasePoints[1] = nearestPoint(grbottominner,grbottomouter,current);
-                goalBasePoints[2] = nearestPoint(grbottomouter,grtopouter,current);
+                goalBasePoints[2] = nearestPoint(grbottominner,grtopinner,current);
 
                 minDist = 1000000; 
                 argmin=0;

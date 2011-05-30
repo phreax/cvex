@@ -28,6 +28,44 @@ public class Vector2D {
         this.y = v.y;
     }
 
+    /**
+     * rotate a vector by angle theta
+     **/
+    public static Vector2D rotate(Vector2D p, double theta) {
+        double x,y;
+        x = Math.cos(theta)*p.x - Math.sin(theta)*p.y;
+        y = Math.sin(theta)*p.x + Math.cos(theta)*p.y;
+        return new Vector2D(x,y);
+    }
+   
+    /**
+     * rotate a vector by angle theta, respectivly a center c
+     **/
+    public static Vector2D rotate(Vector2D p,double theta, Vector2D c) {
+        Vector2D r = sub(p,c).rotate(theta);
+        return add(r,c);
+    }
+    
+    /**
+     * rotate a vector by angle theta
+     *
+     **/
+    public Vector2D rotate(double theta) {
+        return rotate(this,theta);
+    }
+
+    /**
+     * rotate a vector by angle theta, respectivly a center c
+     **/
+    public Vector2D rotate(double theta, Vector2D c) {
+        return rotate(this,theta,c);
+    }
+    
+    public double distance(Point p) {
+        return Math.sqrt( ((this.x-p.x)*(this.x-p.x)) + ((this.y-p.y)*(this.y-p.y)));
+    }
+
+
     public double distance(Vector2D p) {
         return Math.sqrt( ((this.x-p.x)*(this.x-p.x)) + ((this.y-p.y)*(this.y-p.y)));
     }
