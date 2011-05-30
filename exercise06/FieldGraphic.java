@@ -88,7 +88,7 @@ public class FieldGraphic {
      * @params: none
      * @return: none
      **/
-    public  visualizeField() {
+    public void visualizeField() {
         // the green weedy soccer field
         this.graphic.setColor(Color.green);
         this.graphic.fillRect(0,0,800,600);
@@ -143,12 +143,16 @@ public class FieldGraphic {
         dtable.createTable();
 
         int argmin;
-        for(int i=0;i<image.width();i++=)
-            for(int j=0;j<image.height();i++) {
-                argmin = dtable.getArgMin();
+        for(int i=0;i<image.width();i+=10)
+            for(int j=0;j<image.height();j+=10) {
+                argmin = dtable.getArgMin(i,j);
                 Vector2D dvector = dtable.vmatrix[i][j][argmin];
                 this.graphic.setColor(Color.blue);
-                draw
+                graphic.drawLine(i,j,dvector.getX()+i,dvector.getY()+j);
+            }
+        Painter painter = new Painter("Distances", this.image);
+    }
+                
 
 
 

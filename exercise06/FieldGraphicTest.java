@@ -18,6 +18,7 @@ import java.util.List;
 public class FieldGraphicTest {
     public static void main(String args[]) {
         FieldGraphic field = new FieldGraphic();
-        field.visualize();
+        field.visualizeField();
+        field.visualizeDistances();
     }
 }
