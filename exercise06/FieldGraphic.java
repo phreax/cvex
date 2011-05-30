@@ -143,8 +143,9 @@ public class FieldGraphic {
         dtable.createTable();
 
         int argmin;
-        for(int i=0;i<image.width();i+=10)
-            for(int j=0;j<image.height();j+=10) {
+        int step = 5;
+        for(int i=0;i<image.width();i+=step)
+            for(int j=0;j<image.height();j+=step) {
                 argmin = dtable.getArgMin(i,j);
                 Vector2D dvector = dtable.vmatrix[i][j][argmin];
                 this.graphic.setColor(Color.blue);
