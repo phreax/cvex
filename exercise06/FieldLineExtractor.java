@@ -60,11 +60,11 @@ public class FieldLineExtractor {
         Matrix Rx = new Matrix(array1);
         //double[][] array2 = {{Math.cos(pitch), 0., -Math.sin(pitch)}, {0.,1.,0.}, {Math.sin(pitch), 0., Math.cos(pitch)}};
         //Matrix Ry = new Matrix(array2);
-        //double[][] array3 = {{Math.cos(), Math.sin(yaw), 0.}, {-Math.sin(yaw), Math.cos(yaw), 0.}, {0.,0.,1.,}};
+        //double[][] array3 = {{Math.cos(pitch), Math.sin(pitch), 0.}, {-Math.sin(pitch), Math.cos(pitch), 0.}, {0.,0.,1.,}};
         //Matrix Rz = new Matrix(array3);
         // Compute R
         //Matrix R = Rx.times(Ry).times(Rz);
-        Matrix R = Rx;
+        Matrix R = Rx; 
         System.out.println("Rotation Matrix:");
         R.print(3,5);
 
@@ -98,8 +98,8 @@ public class FieldLineExtractor {
         
 
         for(Vector2D v : points) {
-            pxpy1.set(0,0,(v.getX()-400)*phi); // center pixel -400px
-            pxpy1.set(1,0,(v.getY()-300)*phi); // center pixel -300px
+            pxpy1.set(0,0,(v.getX()-320)*phi); // center pixel w/2
+            pxpy1.set(1,0,(v.getY()-240)*phi); // center pixel h/2
             Matrix xy1 = H_inverse.times(K_inverse).times(pxpy1);
             xy1 = xy1.times(1/xy1.get(2,0)); // normalize by z coordinte
             //xy1.print(3,3);
