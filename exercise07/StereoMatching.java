@@ -5,6 +5,11 @@
  * stereo images, and computing the 
  * of each corresponding pair of points
  *
+ * Two implemantions are provided:
+ *
+ *      - naive matching
+ *      - enhanced matching, using dynamic programming
+ *
  * @author Michael Thomas, Jan Swoboda
  * @version 0.1, 2011-06-04
  *
@@ -145,10 +150,28 @@ public class StereoMatching {
         return disparityMatrix;
     }
 
+    public static int[][] computeDisparityDP(Image imgLeft, Image imgRight, int maxDisparity, int patchsize, int occlusion) {
+        int w = imgLeft.width();
+        int h = imgLeft.height();
+
+        int[][] disparityMatrix = new int[w][h];
+        
+        for(int j=0;j<h;j++) { 
+            int[] matchedDisparity = findBestMatchDP(imgLeft,imgRight,maxDisparity,patchsize,occlusion,j);
+            for(int i=0;i<w;i++) {
+                disparityMatrix[i][j] = matchedDisparity[i];
+            }
+        }
+
+        return disparityMatrix;
+    }
+
+
+
     /** compute disparity space image
      *  from given row 
      */
-    public static int[][] computeDSI(Image imgLeft, Image imgRight, int maxDisparity, int patchsize, int row) {
+    private static int[][] computeDSI(Image imgLeft, Image imgRight, int maxDisparity, int patchsize, int row) {
 
         int w = imgLeft.width();
         int h = imgLeft.height();
@@ -162,6 +185,80 @@ public class StereoMatching {
         
         return dsi;
     }
+
+    /** dynamic programming algorithm to find the 
+     * best matching path in the disparity space image
+     */
+    private static int[] findBestMatchDP(Image imgLeft, Image imgRight, int maxDisparity, int patchsize, int occlusion, int row) {
+
+        int[][] dsi = computeDSI(imgLeft, imgRight, maxDisparity, patchsize,row);
+
+        int w = imgLeft.width();
+        int h = imgRight.width();
+
+        int[][] costs = new int[w][h];
+        int[][] path  = new int[w][h];
+        
+        // initialize cost matrix
+        for(int i=0;i<w;i++) costs[i][0] = i*occlusion;
+        for(int i=0;i<h;i++) costs[0][i] = i*occlusion;
+
+        int[] minima = new int[3];
+
+        for(int i=1;i<w;i++)
+            for(int j=1;j<h;j++) {
+                // three different ways to go, choose
+                // the one with the smallest costs
+                int similarity = Integer.MAX_VALUE;
+
+                // get value of dsi, from simulated
+                // w x w matrix
+                // is there another way doing it, to reduce complexity
+                // to O(w * maxDisparity) ?
+                if(i>=j && (i-j) <maxDisparity) 
+                    similarity = dsi[j][i-j];
+                
+                minima[0] = costs[i-1][j-1] + similarity;
+                minima[1] = costs[i-1][j] + occlusion;
+                minima[2] = costs[i][j-1] + occlusion;
+
+                int minidx = argmin(minima);
+
+                costs[i][j] = minima[minidx];
+
+                // record choose path for reconstruction
+                path[i][j] = minidx;
+            }
+
+        // reconstruction of the path
+
+        int[] matchedDisparity = new int[w];
+
+        int p = w-1;
+        int q = h-1;
+
+        while(p!=0 && q!=0) {
+            switch(path[p][q]) {
+                case 0:
+                    // matched
+                    matchedDisparity[p] = p-q;
+                    break;
+                case 1:
+                    // occluded from left
+                    matchedDisparity[p] = -1;
+                case 2:
+                    // occluded from right
+                    matchedDisparity[p] = -1;
+            }
+        }
+
+        return matchedDisparity;
+    }
+
+                
+
+
+
 
 
         
