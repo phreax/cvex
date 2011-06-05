@@ -127,11 +127,21 @@ public class Image {
         return c.gray();
     }
 
+    // set/get pixel value using a Point
+    public void setGray(Point p, int val) {
+        Color c = new Color(val);
+        this.setPixel(p.getX(),p.getY(),c);
+    }
+    
+    public int getGray(Point p) {
+        Color c = this.getPixel(p.getX(),p.getY()); 
+        return c.gray();
+    }
+
     public void setGray(int x, int y, int val) {
         Color c = new Color(val);
         this.setPixel(x,y,c);
     }
-    
     public void setPixel(int x, int y, int c) {
         this.image.setRGB(x, y, c);
         // Update image
@@ -142,6 +152,12 @@ public class Image {
         return ( x>=0 && y>=0 && x<width() && y < height());
     }
 
+    // check boundaries using a point
+    public boolean checkBoundaries(Point p) {
+        int x = p.getX();
+        int y = p.getY();
+        return ( x>=0 && y>=0 && x<width() && y < height());
+    }
     /** substract to images
      * @param minImg   -- minuend
      * @param subImage -- subtrahent
