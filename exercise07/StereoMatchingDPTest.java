@@ -54,7 +54,7 @@ public class StereoMatchingDPTest {
 
         int maxdisp = 64;
         int patchsize = 5;
-        int occlusion = 2000; // occlusion constant
+        int occlusion = 5000; // occlusion constant
 
         if(args.length >= 3)
             occlusion = Integer.parseInt(args[2]);

@@ -155,12 +155,20 @@ public class StereoMatching {
         int h = imgLeft.height();
 
         int[][] disparityMatrix = new int[w][h];
+        int progress=0;
         
         for(int j=0;j<h;j++) { 
             int[] matchedDisparity = findBestMatchDP(imgLeft,imgRight,maxDisparity,patchsize,occlusion,j);
+                
             for(int i=0;i<w;i++) {
                 disparityMatrix[i][j] = matchedDisparity[i];
             }
+
+            if(progress<(int)((j/(float)h)*100)) {
+                progress = (int)((j/(float)h)*100);
+                System.out.println(progress+"%" );
+            }
+
         }
 
         return disparityMatrix;
@@ -227,7 +235,7 @@ public class StereoMatching {
                 costs[i][j] = minima[minidx];
 
                 // record choose path for reconstruction
-                path[i][j] = minidx;
+                path[i][j] = minidx+1;
             }
 
         // reconstruction of the path
@@ -239,30 +247,25 @@ public class StereoMatching {
 
         while(p!=0 && q!=0) {
             switch(path[p][q]) {
-                case 0:
+                case 1:
                     // matched
                     matchedDisparity[p] = p-q;
+                            
+                    p--;q--; 
                     break;
-                case 1:
+                case 2:
                     // occluded from left
                     matchedDisparity[p] = -1;
-                case 2:
+                    p--; 
+                case 3:
                     // occluded from right
                     matchedDisparity[p] = -1;
+                    q--; 
             }
         }
 
         return matchedDisparity;
     }
-
-                
-
-
-
-
-
-        
-
 
 }
 
