@@ -51,7 +51,7 @@ public class StereoMatchingTest {
         }       
 
         int maxdisp = 64;
-        int patchsize = 11;
+        int patchsize = 5;
 
         if(args.length >= 3)
             patchsize = Integer.parseInt(args[2]);
