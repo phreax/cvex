@@ -1,3 +1,13 @@
+/**
+ * testing Hough Transformation:
+ *
+ * find rail tracks 
+ *
+ * @author  Michael Thomas, Jan Swoboda
+ * @version 2011-06-18
+ *
+ */
+
 
 package exercise08;
 import exercise08.*;
@@ -8,16 +18,18 @@ public class HoughTest2 {
 
     public static void main(String[] args) {
 
-        Image image = new Image(args[0]);
-
+        String imagefile = "exercise08/schienen.jpg";
+       
         int numSamples = 500;
-        int thres = 120;
+        int thres = 100;
 
+        if(args.length>0)
+            numSamples = Integer.valueOf(args[0]);
+  
         if(args.length>1)
-            numSamples = Integer.valueOf(args[1]);
-        
-        if(args.length>2)
-            thres = Integer.valueOf(args[2]);
+            thres = Integer.valueOf(args[1]);
+        hres = Integer.valueOf(args[1]);
+        Image image = new Image(imagefile);
 
         Painter painter = new Painter("image", image);
 
