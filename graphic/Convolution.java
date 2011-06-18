@@ -105,6 +105,34 @@ public class Convolution {
         return filter(image,kernel);
     }
 
+    
+    /**
+     * compute magintude image from
+     * sobel filter
+     *
+     */
+    public static short[][] sobelMagnitude(Image image) {
+
+        short[][] sobelX = sobel(image,0);
+        short[][] sobelY = sobel(image,1);
+
+        short[][] imgMag = new short[image.width()][image.height()];
+
+        for(int i=0;i<image.width();i++)
+            for(int j=0;j<image.height();j++) {
+
+                short gradX = sobelX[i][j];
+                short gradY = sobelY[i][j];
+                short val = (short) (Math.sqrt(gradX*gradX + gradY*gradY));
+
+                imgMag[i][j] = val;
+
+            }
+
+        return imgMag;
+
+    }
+
     /** sum up pixel intensities over
      *  a reagion, using integral images
      *
